@@ -1,0 +1,89 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:17-alpine
+    container_name: comp-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: comp_oss_test
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d comp_oss_test']
+      interval: 5s
+      timeout: 2s
+      retries: 20
+    networks:
+      - comp-network
+    logging:
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  # Fleet MDM Server (Optional - uncomment if you want to run Fleet locally)
+  # fleet:
+  #   image: fleetdm/fleet:latest
+  #   container_name: comp-fleet
+  #   restart: unless-stopped
+  #   ports:
+  #     - '8080:8080'
+  #   environment:
+  #     FLEET_MYSQL_ADDRESS: fleet-mysql:3306
+  #     FLEET_MYSQL_DATABASE: fleet
+  #     FLEET_MYSQL_USERNAME: fleet
+  #     FLEET_MYSQL_PASSWORD: fleet
+  #     FLEET_REDIS_ADDRESS: fleet-redis:6379
+  #     FLEET_SERVER_ADDRESS: 0.0.0.0:8080
+  #   depends_on:
+  #     fleet-mysql:
+  #       condition: service_healthy
+  #     fleet-redis:
+  #       condition: service_healthy
+  #   networks:
+  #     - comp-network
+  #   command: fleet serve
+
+  # fleet-mysql:
+  #   image: mysql:8.0
+  #   container_name: comp-fleet-mysql
+  #   restart: unless-stopped
+  #   environment:
+  #     MYSQL_ROOT_PASSWORD: fleet
+  #     MYSQL_DATABASE: fleet
+  #     MYSQL_USER: fleet
+  #     MYSQL_PASSWORD: fleet
+  #   volumes:
+  #     - fleet_mysql_data:/var/lib/mysql
+  #   healthcheck:
+  #     test: ['CMD', 'mysqladmin', 'ping', '-h', 'localhost']
+  #     interval: 5s
+  #     timeout: 2s
+  #     retries: 20
+  #   networks:
+  #     - comp-network
+
+  # fleet-redis:
+  #   image: redis:7-alpine
+  #   container_name: comp-fleet-redis
+  #   restart: unless-stopped
+  #   healthcheck:
+  #     test: ['CMD', 'redis-cli', 'ping']
+  #     interval: 5s
+  #     timeout: 2s
+  #     retries: 20
+  #   networks:
+  #     - comp-network
+
+networks:
+  comp-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  fleet_mysql_data:

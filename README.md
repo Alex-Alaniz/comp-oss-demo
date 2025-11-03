@@ -69,15 +69,53 @@ Get access to the cloud hosted version of [Comp AI](https://trycomp.ai).
 
 ## Getting Started
 
-To get a local copy up and running, please follow these simple steps.
+### ⚡ Quick Start (Recommended)
 
-### Prerequisites
+Get everything running with a single command:
+
+```sh
+# 1. Clone the repository
+git clone https://github.com/trycompai/comp.git && cd comp
+
+# 2. Set up environment variables (see QUICK_START.md for details)
+cp apps/app/.env.example apps/app/.env
+cp apps/portal/.env.example apps/portal/.env
+cp apps/api/.env.example apps/api/.env
+cp packages/db/.env.example packages/db/.env
+
+# 3. Configure your .env files, then run the magic setup:
+./dev.sh
+```
+
+That's it! This will automatically:
+- ✅ Start PostgreSQL in Docker
+- ✅ Install all dependencies
+- ✅ Run database migrations
+- ✅ Seed initial data
+- ✅ Start all 3 applications (App, Portal, API)
+
+**📖 For detailed setup instructions, see [QUICK_START.md](QUICK_START.md)**
+
+Or use the Makefile:
+```sh
+make dev    # Start everything
+make stop   # Stop all services
+make clean  # Clean and reset
+make help   # See all commands
+```
+
+### Manual Setup
+
+To get a local copy up and running manually, please follow these simple steps.
+
+#### Prerequisites
 
 Here is what you need to be able to run Comp AI.
 
 - Node.js (Version: >=20.x)
 - Bun (Version: >=1.1.36)
-- Postgres (Version: >=15.x)
+- PostgreSQL (Version: >=15.x)
+- Docker & Docker Compose (for automatic setup)
 
 ## Development
 
